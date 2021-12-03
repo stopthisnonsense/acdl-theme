@@ -60,8 +60,6 @@ if ( $query->have_posts() )
 			<p><?php the_tags(); ?></p>
 
 		</div>
-
-		<hr />
 		<?php
 	}
 	?>
