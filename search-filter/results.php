@@ -39,25 +39,33 @@ if ( $query->have_posts() )
 		$query->the_post();
 		$resources = pods( 'resource', get_the_ID() );
 		$resource_link = get_the_permalink();
+		$viewable = 'Viewable Content';
 		if( $resources->display( 'file' ) && $resources->display('download_only') == true) {
 			$resource_link = $resources->display( 'file' );
+			$viewable = 'Downloadable File';
 		}
+
+		$terms = get_the_terms( $query->ID, 'resource_category' );
+		$term_names = join(', ', wp_list_pluck($terms, 'name'));
 
 		?>
 		<div <?php post_class( 'search-filter-item' ); ?>>
-			<h2><a href="<?= $resource_link; ?>"><?php the_title(); ?></a></h2>
-			<p class="search-filter-item__date"><small><?php the_date(); ?></small></p>
-
-			<p><br /><?php the_excerpt(); ?></p>
-			<?php
+			<h2 class="search-filter-item__title"><a href="<?= $resource_link; ?>"><?php the_title(); ?></a></h2>
+			<p class="search-filter-item__date"><small>Published Date: <?= get_the_date(); ?></small></p>
+			<div class="search-filter-item__content">
+				<p><br /><?php the_excerpt(); ?></p>
+				<?php
 				if ( has_post_thumbnail() ) {
 					echo '<p>';
 					the_post_thumbnail("small");
 					echo '</p>';
 				}
 			?>
-			<p><?php the_category(); ?></p>
-			<p><?php the_tags(); ?></p>
+			</div>
+
+
+			<p class="search-filter-item__categories">Topics: <?= $term_names; ?></p>
+			<p class="search-filter-item__download"><a href="<?= $resource_link; ?>"><?= $viewable; ?></a></p>
 
 		</div>
 		<?php
