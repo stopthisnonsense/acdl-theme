@@ -31,28 +31,28 @@ function ds_resource_categories() {
         while( $resource_categories->fetch() ) {
             if( in_array( $resource_categories->display( 'term_id' ), $ds_terms )  ) {
                 $term_id = $resource_categories->display( 'term_id' );
-            $term_name = $resource_categories->display( 'name' );
-            $term_slug = $resource_categories->display( 'slug' );
-            $term_image = get_stylesheet_directory_uri() . '/images/plus.png';
-            if( !empty($resource_categories->display( 'featured_image' )) ) {
-                $term_image = $resource_categories->display( 'featured_image' );
-            }
-            $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
+                $term_name = $resource_categories->display( 'name' );
+                $term_slug = $resource_categories->display( 'slug' );
+                $term_image = get_stylesheet_directory_uri() . '/images/plus.png';
+                if( !empty($resource_categories->display( 'featured_image' )) ) {
+                    $term_image = $resource_categories->display( 'featured_image' );
+                }
+                $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
 
-            // var_dump($resource_categories->fetch());
-            $content .= '<a class="grid-item grid-item--resources grid-item--' . $term_id . '" href="' . get_the_permalink( 239767 ) . '?_sft_resource_category=' . $term_slug . '">';
+                // var_dump($resource_categories->fetch());
+                $content .= '<a class="grid-item grid-item--resources grid-item--' . $term_id . '" href="' . get_the_permalink( 239767 ) . '?_sft_resource_category=' . $term_slug . '">';
 
-                $content .= '<div class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '">';
-                    if( $featured_image ) {
-                        $content .= $featured_image;
-                    }
-                    $content .= '<h2 class="grid-item__header grid-item__header--resources grid-item__header--' . $term_id . '">' . $term_name . '</h2>';
+                    $content .= '<div class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '">';
+                        if( $featured_image ) {
+                            $content .= $featured_image;
+                        }
+                        $content .= '<h2 class="grid-item__header grid-item__header--resources grid-item__header--' . $term_id . '">' . $term_name . '</h2>';
 
-                $content .= '</div>';
+                    $content .= '</div>';
 
-            $content .= '</a>';
+                $content .= '</a>';
 
-            unset($featured_image);
+                unset($featured_image);
             }
         }
         $content .= '</div>';
