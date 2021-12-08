@@ -41,12 +41,12 @@ if ( $query->have_posts() )
 			$term_description = $term_item->description;
 		}
 	}
-
 	?>
 	<?php if( !empty( $term_name ) ) { ?>
 		<h2 class="search-filter-results__title"><?= $term_name; ?></h2>
 	<?php
 	} ?>
+
 	<div class="search-filter-results__data">
 		Found <?php echo $query->found_posts; ?> Results<br />
 		Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?><br />
@@ -62,10 +62,10 @@ if ( $query->have_posts() )
 		$query->the_post();
 		$resources = pods( 'resource', get_the_ID() );
 		$resource_link = get_the_permalink();
-		$viewable = 'Viewable Content';
+		$viewable = 'View Content';
 		if( $resources->display( 'file' ) && $resources->display('download_only') == true) {
 			$resource_link = $resources->display( 'file' );
-			$viewable = 'Downloadable File';
+			$viewable = 'Download File';
 		}
 
 		$terms = get_the_terms( $query->ID, 'resource_category' );
