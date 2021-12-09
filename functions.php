@@ -40,7 +40,7 @@ function ds_resource_categories() {
                 $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
 
                 // var_dump($resource_categories->fetch());
-                $content .= '<a class="grid-item grid-item--resources grid-item--' . $term_id . '" href="' . get_the_permalink( 239767 ) . '?_sft_resource_category=' . $term_slug . '">';
+                $content .= '<a class="grid-item grid-item--resources grid-item--' . $term_id . '" href="' . get_term_link( $term_id, 'resource_category' ) . '">';
 
                     $content .= '<div class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '">';
                         if( $featured_image ) {
@@ -59,3 +59,193 @@ function ds_resource_categories() {
         return $content;
     }
 }
+
+function resource_categories_posts( $query ) {
+    if( $query->is_tax( 'resource-category' ) ) {
+        $query->set( 'post_type', [ 'post', 'event', 'resource' ] );
+        $query->set( 'tax_query', [
+            [
+                'taxonomy' => 'resource-category',
+                'field' => 'slug',
+                'terms' => get_queried_object()->slug,
+            ],
+        ] );
+    }
+}
+
+add_action( 'pre_get_posts', 'resource_categories_posts' );
+
+
+function ds_category_archive() {
+    $category_query = get_queried_object();
+    if( $category_query ) {
+        // var_dump($category_query);
+        $category_id = $category_query->term_id;
+        $category_name = $category_query->name;
+        $category_parent = $category_query->taxonomy;
+        $category_parent_slug = $category_query->slug;
+        $category_parent_description = wpautop( $category_query->description );
+
+        $category_children = get_term_children( $category_id, $category_parent );
+
+        $category_pagination = "<div class='pagination pagination--search-filter'>" . get_the_posts_pagination() . "</div>";
+
+        $templates[] = "<div class='category-parent category-parent--{$category_parent_slug}'>
+        {$category_pagination}
+        </div>";
+
+        if( $category_children ) {
+            // var_dump($category_children);
+            $templates[] = "<div class='subcategories subcategories--{$category_parent_slug}'>
+            <h2 class='subcategory__title subcategory__title--{$category_parent_slug}'>Subcategories</h2>";
+
+            foreach($category_children as $category_child) {
+
+                $category_child_data = get_term_by( 'id', $category_child, $category_parent );
+                // var_dump($category_child_data);
+
+                $category_child_title = $category_child_data->name;
+                $category_child_slug = $category_child_data->slug;
+                $category_child_description = $category_child_data->description;
+                $category_child_description = wpautop( $category_child_description );
+
+
+
+                $category_child_link = get_term_link( $category_child_data->term_id, 'resource_category' );
+
+                $category_child_template_title = "<h3 class='category-child__title category-child__title--{$category_child_slug}'>{$category_child_title}</h3>";
+
+                $category_child_template_description = "<div class='category-child__description category-child__description--{$category_child_slug}'>{$category_child_description}</div>";
+
+                $category_child_template_link = "<a class='category-child__link category-child__link--{$category_child_slug}' href='{$category_child_link}'> See more {$category_child_title}</a>";
+
+                $child_args = [
+                    'posts_per_page' => '3',
+                    'post_type' => [ 'post', 'resource' ],
+                    'tax_query' => [
+                        [
+                            'taxonomy' => $category_parent,
+                            'field' => 'slug',
+                            'terms' => $category_child_slug,
+                        ],
+                    ],
+                 ];
+                $category_child_posts = get_posts( $child_args );
+                // var_dump($category_child_posts);
+                $template = "<div class='category-child category-child--{$category_child_slug}'>";
+
+                    $template .= "{$category_child_template_title}
+                    {$category_child_template_description}";
+
+                    if( $category_child_posts ) {
+                        $template .= "<div class='category-child-posts category-child-posts--{$category_child_slug}'>";
+                            foreach($category_child_posts as $category_child_post) {
+                                // setup_postdata( $category_child_post );
+                                // var_dump( $category_child_post );
+                                $category_child_post_title = get_the_title($category_child_post->ID);
+                                $category_child_post_excerpt = get_the_excerpt($category_child_post->ID);
+                                $category_child_pods = pods( 'resource', $category_child_post->ID );
+                                // var_dump( $category_child_pods );
+                                $category_child_post_link = get_the_permalink($category_child_post->ID);
+
+                                $category_child_post_date = get_the_date( 'M d, Y', $category_child_post->ID);
+
+                                $viewable = 'View Content';
+                                if( $category_child_pods->display( 'file' ) && $category_child_pods->display('download_only') == true) {
+                                    $category_child_post_link = $category_child_pods->display( 'file' );
+                                    $viewable = 'Download File';
+                                }
+
+                                $category_child_post_terms = get_the_terms( $category_child_post->ID, 'resource_category' );
+                                $term_names = join(', ', wp_list_pluck($category_child_post_terms, 'name'));
+                                $post_type = ucwords(get_post_type( $category_child_post->ID ));
+
+                                if( empty($term_names) ) {
+                                    $term_names = 'Uncategorized';
+                                }
+
+
+
+                                $template .= "<a class='category-child-post category-child-post--{$category_child_slug}' href='{$category_child_post_link}'>
+
+                                    <h4 class='category-child-post__title category-child-post__title--{$category_child_slug}'>{$category_child_post_title}</h4>
+
+                                    <p class='category-child-post__date category-child-post__date--{$category_child_slug}'><small>Published: {$category_child_post_date}</small></p>
+
+                                    <div class='category-child-post__description category-child-post__description--{$category_child_slug}'>{$category_child_post_excerpt}</div>
+
+                                    <p class='category-child-post__type category-child-post__type--{$category_child_slug}'>{$post_type} Topics: {$term_names} </p>
+
+                                    <p class='category-child-post__download category-child-post__download--{$category_child_slug}'> {$viewable}</p>
+                                </a>";
+                                // wp_reset_postdata()
+                            }
+                            $template .= $category_child_template_link;
+                        $template .= "</div>";
+
+                    }
+
+
+                $template .= "</div>";
+
+                $templates[1] .= $template;
+                unset($template);
+            }
+            $templates[1] .= "</div>";
+        }
+        // var_dump($templates);
+
+
+        // return $templates;
+    }
+    if( have_posts() ) {
+        $category_posts_template = "<div class='category-child-posts category-child-posts--{$category_parent_slug}'>";
+
+            while( have_posts() ) {
+
+                the_post();
+                $category_post_link = get_the_permalink();
+                $category_post_title = get_the_title();
+                $category_post_excerpt = wpautop( get_the_excerpt() );
+                $category_post_date = get_the_date();
+
+                $category_post_pods = pods( 'resource', get_the_ID() );
+
+                $viewable = 'View Content';
+                if( $category_post_pods->display( 'file' ) && $category_post_pods->display('download_only') == true) {
+                    $category_post_link = $category_post_pods->display( 'file' );
+                    $viewable = 'Download File';
+                }
+
+                $category_post_terms = get_the_terms( get_the_ID(), 'resource_category' );
+                $term_names = join(', ', wp_list_pluck($category_post_terms, 'name'));
+                $post_type = ucwords(get_post_type( get_the_ID() ));
+
+                if( empty($term_names) ) {
+                    $term_names = 'Uncategorized';
+                }
+
+
+                $category_posts_template .= "<a class='category-child-post category-child-post--{$category_parent_slug}' href='{$category_post}'>
+                    <h3 class='category-child-post__title category-child-post__title--{$category_parent_slug}'>{$category_post_title}</h3>
+                    <p class='category-child-post__date category-child-post__date--{$category_parent_slug}'>{$category_post_date}</p>
+                    <div class='category-child-post__description category-child-post__description--{$category_parent_slug}'>{$category_post_excerpt}</div>
+                    <p class='category-child-post__type category-child-post__type--{$category_parent_slug}'>{$post_type} Topics: {$term_names} </p>
+
+                    <p class='category-child-post__download category-child-post__download--{$category_parent_slug}'> {$viewable}</p>
+                </a>";
+
+            } ?>
+    <?php
+        $category_posts_template .= $category_pagination;
+        $category_posts_template .= "</div>";
+        $templates[] = "<h2>All {$category_name} Resources</h2>
+        <div class='category-parent category-parent--{$category_parent_slug}'>{$category_posts_template}</div>";
+    }
+    if( !empty( $templates ) ) {
+        $templates = implode("\n", $templates);
+    }
+    return $templates;
+}
+
+add_shortcode( 'category_archive', 'ds_category_archive' );
