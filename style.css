@@ -27,10 +27,10 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 h1 {
 	font-size: 2rem !important;
 }
-h2:not(.search-filter-item__title) {
+h2:not(.search-filter-item__title, .grid-item__header) {
 	font-size: 1.6rem !important;
 }
-h3 {
+h3:not(.grid-item__subheader) {
 	font-size: 1.4rem !important;
 }
 h4 {
@@ -436,7 +436,7 @@ body:not(.et-fb) .rv_element {
 }
 
 .grid--resources {
-	--ds-grid-columns: repeat(auto-fit, 15rem);
+	--ds-grid-columns: repeat(auto-fit, 20rem);
 	justify-content: center;
 	align-content: center;
 }
@@ -593,6 +593,16 @@ body:not(.et-fb) .rv_element {
 	gap: var(--ds-grid-gap);
 }
 
+.grid-item {
+	padding: 0.5rem;
+	display: flex;
+	flex-direction: column;
+}
+
+.grid-item--resources {
+	box-shadow: 0px 12px 18px -6px rgb(0 0 0 / 30%);
+}
+
 .grid--resources {
 	grid-template-columns: var(--ds-grid-columns);
 }
@@ -601,12 +611,21 @@ body:not(.et-fb) .rv_element {
 	display: flex;
 	flex-direction: column;
 	padding: 0.5rem;
-	align-items: center;
+	min-height: 4rem;
+}
+
+.grid-item--resources .grid-item__content:first-child {
+	border: 1px solid;
 }
 
 .grid-item--resources .grid-item__header {
-	font-size: 1.625rem;
-	text-align: center;
+	font-size: 1.2rem;
+	line-height: 1.2;
+	padding-bottom: 0;
+}
+
+.grid-item--resources .grid-item__subheader {
+	font-size: 1rem;
 	line-height: 1.2;
 }
 
@@ -616,6 +635,12 @@ body:not(.et-fb) .rv_element {
 	width: clamp(100px, 100%, 150px);
 	margin-bottom: 1rem;
 	border-radius: 50%;
+}
+
+.grid-item__link {
+	display: block;
+	padding: 0.25rem;
+	margin: 0.25rem 0;
 }
 
 .category-parent {

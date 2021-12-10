@@ -30,6 +30,9 @@ function ds_resource_categories() {
         $content = '<div class="grid grid--resources">';
         while( $resource_categories->fetch() ) {
             if( in_array( $resource_categories->display( 'term_id' ), $ds_terms )  ) {
+
+                $term_children = get_term_children( $resource_categories->display( 'term_id' ),  $resource_categories->display( 'taxonomy' ) );
+
                 $term_id = $resource_categories->display( 'term_id' );
                 $term_name = $resource_categories->display( 'name' );
                 $term_slug = $resource_categories->display( 'slug' );
@@ -37,22 +40,40 @@ function ds_resource_categories() {
                 if( !empty($resource_categories->display( 'featured_image' )) ) {
                     $term_image = $resource_categories->display( 'featured_image' );
                 }
-                $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
+                // $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
 
                 // var_dump($resource_categories->fetch());
-                $content .= '<a class="grid-item grid-item--resources grid-item--' . $term_id . '" href="' . get_term_link( $term_id, 'resource_category' ) . '">';
+                $content .= '<div class="grid-item grid-item--resources grid-item--' . $term_id . '">';
+                    $content .= '<a class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '" href="' . get_term_link( $term_id, 'resource_category' ) . '">';
 
-                    $content .= '<div class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '">';
                         if( $featured_image ) {
                             $content .= $featured_image;
                         }
                         $content .= '<h2 class="grid-item__header grid-item__header--resources grid-item__header--' . $term_id . '">' . $term_name . '</h2>';
 
-                    $content .= '</div>';
-
-                $content .= '</a>';
+                    $content .= '</a>';
 
                 unset($featured_image);
+
+                    $child_term_template = "
+                    <div class='grid-item__content grid-item__content--resources grid-item__content--{$term_id}'>
+                    <h3 class='grid-item__subheader grid-item__subheader--{$term_id}'>{$term_name} Subcategories</h3>";
+                    foreach( $term_children as $term_child ) {
+                        $term_child_data = get_term_by( 'id', $term_child, $resource_categories->display( 'taxonomy' ) );
+                        var_dump( $term_child_data );
+
+                        $term_child_name = $term_child_data->name;
+                        $term_child_id = $term_child_data->term_id;
+                        $term_child_slug = $term_child_data->slug;
+                        $term_child_link = get_term_link( $term_child_id, $resource_categories->display( 'taxonomy' ) );
+                        $child_term_template .= "<a class='grid-item__link grid-item__link--{$term_child_slug}' href='{$term_child_link}'>{$term_child_name}</a>";
+
+                    }
+                    $child_term_template .= "</div>";
+
+                    $content .= $child_term_template;
+                $content .= "</div>";
+
             }
         }
         $content .= '</div>';
@@ -78,11 +99,13 @@ add_action( 'pre_get_posts', 'resource_categories_posts' );
 
 function ds_category_archive() {
     $category_query = get_queried_object();
+
     if( $category_query ) {
         // var_dump($category_query);
+        $category_parent = $category_query->taxonomy;
         $category_id = $category_query->term_id;
         $category_name = $category_query->name;
-        $category_parent = $category_query->taxonomy;
+
         $category_parent_slug = $category_query->slug;
         $category_parent_description = wpautop( $category_query->description );
 
