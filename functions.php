@@ -60,7 +60,7 @@ function ds_resource_categories() {
                     <h3 class='grid-item__subheader grid-item__subheader--{$term_id}'>{$term_name} Subcategories</h3>";
                     foreach( $term_children as $term_child ) {
                         $term_child_data = get_term_by( 'id', $term_child, $resource_categories->display( 'taxonomy' ) );
-                        var_dump( $term_child_data );
+                        // var_dump( $term_child_data );
 
                         $term_child_name = $term_child_data->name;
                         $term_child_id = $term_child_data->term_id;
