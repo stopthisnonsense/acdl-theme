@@ -260,6 +260,7 @@ function ds_category_archive() {
 
                 the_post();
                 $category_post_link = get_the_permalink();
+
                 $category_post_title = get_the_title();
                 $category_post_excerpt = wpautop( get_the_excerpt() );
                 $category_post_date = get_the_date();
@@ -271,7 +272,7 @@ function ds_category_archive() {
                     $category_post_link = $category_post_pods->display( 'file' );
                     $viewable = 'Download File';
                 }
-
+                // var_dump($category_post_link);
                 $category_post_terms = get_the_terms( get_the_ID(), 'resource_category' );
                 $term_names = join(', ', wp_list_pluck($category_post_terms, 'name'));
                 $post_type = ucwords(get_post_type( get_the_ID() ));
@@ -281,7 +282,7 @@ function ds_category_archive() {
                 }
 
 
-                $category_posts_template .= "<a class='category-child-post category-child-post--{$category_parent_slug}' href='{$category_post}'>
+                $category_posts_template .= "<a class='category-child-post category-child-post--{$category_parent_slug}' href='{$category_post_link}'>
                     <h3 class='category-child-post__title category-child-post__title--{$category_parent_slug}'>{$category_post_title}</h3>
                     <p class='category-child-post__date category-child-post__date--{$category_parent_slug}'>{$category_post_date}</p>
                     <div class='category-child-post__description category-child-post__description--{$category_parent_slug}'>{$category_post_excerpt}</div>
