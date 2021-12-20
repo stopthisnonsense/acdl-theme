@@ -95,7 +95,7 @@ function categories_card() {
                     <div class='grid-item__content grid-item__content--resources grid-item__content--{$term_id}'>
                     <h3 class='grid-item__subheader grid-item__subheader--{$term_id}'>{$term_name} Subcategories</h3>";
                     foreach( $term_children as $term_child ) {
-                        var_dump($term_child);
+                        // var_dump($term_child);
                         $term_child_data = $term_child;
                         // var_dump( $term_child_data );
 
