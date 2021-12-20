@@ -147,18 +147,18 @@ body:not(.et-fb) .rv_element {
 
 .et-db #et-boc .et-l .top-menu-container .letter-small,
 .top-menu-container .letter-small {
-	font-size: 18px;
+	font-size: 16px;
 	vertical-align: 5px;
 }
 .et-db #et-boc .et-l .top-menu-container .letter-medium,
 .top-menu-container .letter-medium {
-	font-size: 20px;
+	font-size: 26px;
 	vertical-align: 6px;
 }
 
 .et-db #et-boc .et-l .top-menu-container .letter-large,
 .top-menu-container .letter-large {
-	font-size: 22px;
+	font-size: 32px;
 	vertical-align: 6px;
 }
 
@@ -619,7 +619,7 @@ body:not(.et-fb) .rv_element {
 }
 
 .grid-item--resources .grid-item__header {
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 	line-height: 1.2;
 	padding-bottom: 0;
 }

@@ -2,21 +2,21 @@
 jQuery(document).ready(function ($) {
 	var fontSize = restore() || 16;
 	jQuery('.letter-small').click(function () {
-		fontSize = 18;
+		fontSize = 16;
 		jQuery('.font-size-btn--active').toggleClass('font-size-btn--active');
 		jQuery(this).toggleClass('font-size-btn--active');
 		setFontSize(fontSize);
 	});
 
 	jQuery('.letter-medium').click(function () {
-		fontSize = 20;
+		fontSize = 26;
 		jQuery('.font-size-btn--active').toggleClass('font-size-btn--active');
 		jQuery(this).toggleClass('font-size-btn--active');
 		setFontSize(fontSize);
 	});
 
 	jQuery('.letter-large').click(function () {
-		fontSize = 22;
+		fontSize = 32;
 		jQuery('.font-size-btn--active').toggleClass('font-size-btn--active');
 		jQuery(this).toggleClass('font-size-btn--active');
 		setFontSize(fontSize);

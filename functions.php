@@ -53,7 +53,7 @@ function ds_resource_categories() {
 
                     $content .= '</a>';
 
-                unset($featured_image);
+                    unset($featured_image);
 
                     $child_term_template = "
                     <div class='grid-item__content grid-item__content--resources grid-item__content--{$term_id}'>
@@ -76,14 +76,46 @@ function ds_resource_categories() {
 
             }
         }
+        $content .= categories_card();
+
+
         $content .= '</div>';
         return $content;
     }
 }
 
+function categories_card() {
+    $term_children = get_categories();
+    $content .= '<div class="grid-item grid-item--resources grid-item--blog">';
+                    $content .= '<a class="grid-item__content grid-item__content--resources grid-item__content--blog" href="' . get_post_type_archive_link( 'post' ) . '">';
+                        $content .= '<h2 class="grid-item__header grid-item__header--resources grid-item__header--blog">Blog</h2>';
+                    $content .= '</a>';
+
+                    $child_term_template = "
+                    <div class='grid-item__content grid-item__content--resources grid-item__content--{$term_id}'>
+                    <h3 class='grid-item__subheader grid-item__subheader--{$term_id}'>{$term_name} Subcategories</h3>";
+                    foreach( $term_children as $term_child ) {
+                        var_dump($term_child);
+                        $term_child_data = $term_child;
+                        // var_dump( $term_child_data );
+
+                        $term_child_name = $term_child_data->name;
+                        $term_child_id = $term_child_data->term_id;
+                        $term_child_slug = $term_child_data->slug;
+                        $term_child_link = get_term_link( $term_child_id, 'category' );
+                        $child_term_template .= "<a class='grid-item__link grid-item__link--{$term_child_slug}' href='{$term_child_link}'>{$term_child_name}</a>";
+
+                    }
+                    $child_term_template .= "</div>";
+
+                    $content .= $child_term_template;
+                $content .= "</div>";
+    return $content;
+}
+
 function resource_categories_posts( $query ) {
     if( $query->is_tax( 'resource-category' ) ) {
-        $query->set( 'post_type', [ 'post', 'event', 'resource' ] );
+        $query->set( 'post_type', [ 'post', 'resource' ] );
         $query->set( 'tax_query', [
             [
                 'taxonomy' => 'resource-category',
