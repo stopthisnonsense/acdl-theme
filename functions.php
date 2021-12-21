@@ -20,6 +20,7 @@ function ds_resource_categories( $atts ) {
             'ids' => [ 24,25 ],
             'include' => true,
             'blog' => true,
+            'depth' => 1,
         ], $atts, 'ds_resource_categories'
     );
     $ids_to_target = $atts['ids'];
@@ -56,8 +57,13 @@ function ds_resource_categories( $atts ) {
                 // $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
 
                 // var_dump($resource_categories->fetch());
+                $term_item_link = $term_slug;
+                if( 0 < $atts['depth'] ) {
+                    $term_item_link = get_term_link( $term_id, 'resource_category' );
+                }
+
                 $content .= '<div class="grid-item grid-item--resources grid-item--' . $term_id . '">';
-                    $content .= '<a class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '" href="' . get_term_link( $term_id, 'resource_category' ) . '">';
+                    $content .= '<a class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '" href="#' . $term_item_link . '">';
 
                         if( $featured_image ) {
                             $content .= $featured_image;
@@ -67,8 +73,8 @@ function ds_resource_categories( $atts ) {
                     $content .= '</a>';
 
                     unset($featured_image);
-
-                    $child_term_template = "
+                    if( is_iterable($term_children) ) {
+                        $child_term_template = "
                     <div class='grid-item__content grid-item__content--resources grid-item__content--{$term_id}'>
                     <h3 class='grid-item__subheader grid-item__subheader--{$term_id}'>{$term_name} Subcategories</h3>";
                     foreach( $term_children as $term_child ) {
@@ -78,13 +84,19 @@ function ds_resource_categories( $atts ) {
                         $term_child_name = $term_child_data->name;
                         $term_child_id = $term_child_data->term_id;
                         $term_child_slug = $term_child_data->slug;
-                        $term_child_link = get_term_link( $term_child_id, $resource_categories->display( 'taxonomy' ) );
+                        $term_child_link = '#' . $term_child_slug;
+                        if( 0 < $atts['depth'] ) {
+                            $term_child_link = get_term_link( $term_child_id, $resource_categories->display( 'taxonomy' ) );
+                        }
+
                         $child_term_template .= "<a class='grid-item__link grid-item__link--{$term_child_slug}' href='{$term_child_link}'>{$term_child_name}</a>";
 
                     }
                     $child_term_template .= "</div>";
 
                     $content .= $child_term_template;
+                    }
+
                 $content .= "</div>";
 
             }
@@ -244,7 +256,7 @@ function category_constructor( $category_query ) {
                 $category_name = "$category_name Subcategories";
             }
             $templates = "<div class='subcategories subcategories--{$category_parent_slug}'>
-            <h2 class='subcategory__title subcategory__title--{$category_parent_slug}'> $category_name</h2>";
+            <h2 class='subcategory__title subcategory__title--{$category_parent_slug}' id='$category_parent_slug'> $category_name</h2>";
 
             foreach($category_children as $category_child) {
 
@@ -260,7 +272,7 @@ function category_constructor( $category_query ) {
 
                 $category_child_link = get_term_link( $category_child_data->term_id, 'resource_category' );
 
-                $category_child_template_title = "<h3 class='category-child__title category-child__title--{$category_child_slug}'>{$category_child_title}</h3>";
+                $category_child_template_title = "<h3 class='category-child__title category-child__title--{$category_child_slug}' id='$category_child_slug'>{$category_child_title}</h3>";
 
                 $category_child_template_description = "<div class='category-child__description category-child__description--{$category_child_slug}'>{$category_child_description}</div>";
 
