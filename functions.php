@@ -57,13 +57,13 @@ function ds_resource_categories( $atts ) {
                 // $featured_image = "<img src='{$term_image}' class='grid-item__image grid-item__image--resources grid-item__image--{$term_id}'>";
 
                 // var_dump($resource_categories->fetch());
-                $term_item_link = $term_slug;
+                $term_item_link = '#' . $term_slug;
                 if( 0 < $atts['depth'] ) {
                     $term_item_link = get_term_link( $term_id, 'resource_category' );
                 }
 
                 $content .= '<div class="grid-item grid-item--resources grid-item--' . $term_id . '">';
-                    $content .= '<a class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '" href="#' . $term_item_link . '">';
+                    $content .= '<a class="grid-item__content grid-item__content--resources grid-item__content--' . $term_id . '" href="' . $term_item_link . '">';
 
                         if( $featured_image ) {
                             $content .= $featured_image;
@@ -73,7 +73,7 @@ function ds_resource_categories( $atts ) {
                     $content .= '</a>';
 
                     unset($featured_image);
-                    if( is_iterable($term_children) ) {
+                    if( 0 < $atts[ 'depth' ] && is_iterable($term_children) ) {
                         $child_term_template = "
                     <div class='grid-item__content grid-item__content--resources grid-item__content--{$term_id}'>
                     <h3 class='grid-item__subheader grid-item__subheader--{$term_id}'>{$term_name} Subcategories</h3>";
