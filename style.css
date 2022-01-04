@@ -437,8 +437,13 @@ body:not(.et-fb) .rv_element {
 
 .grid--resources {
 	--ds-grid-columns: repeat(auto-fit, 20rem);
-	justify-content: center;
+	/* justify-content: center; */
 	align-content: center;
+}
+@media (max-width: 980px) {
+	.grid--resources {
+		justify-content: center;
+	}
 }
 
 /* SEARCH AND FILTER */
